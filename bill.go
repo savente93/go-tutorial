@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -35,7 +36,7 @@ func (b bill) format() string {
 	fs += fmt.Sprintf(strings.Repeat("-", 34))
 	fs += fmt.Sprintf("\n")
 	fs += fmt.Sprintf("%-25v ...$%0.2f\n", "tip:", b.tip)
-	fs += fmt.Sprintf("%-25v ...$%0.2f", "total:", total)
+	fs += fmt.Sprintf("%-25v ...$%0.2f\n", "total:", total)
 
 	return fs
 
@@ -48,4 +49,13 @@ func (b *bill) updateTip(tip float64) {
 
 func (b *bill) addItem(name string, price float64) {
 	b.items[name] = price
+}
+
+func (b *bill) save() {
+	data := []byte(b.format())
+	err := os.WriteFile("bills/"+b.name+".txt", data, 0644)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("bill was saved!")
 }
